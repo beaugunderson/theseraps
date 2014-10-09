@@ -1,0 +1,27 @@
+{
+  "name": "theseraps",
+  "version": "1.0.0",
+  "description": "A Twitter bot that makes rap verses.",
+  "main": "theseraps.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "author": "Beau Gunderson <beau@beaugunderson.com>",
+  "license": "BSD",
+  "dependencies": {
+    "JSONStream": "^0.9.0",
+    "async": "^0.9.0",
+    "cheerio": "^0.17.0",
+    "commander": "^2.3.0",
+    "diffbot": "^0.1.0",
+    "feedparser": "^0.19.2",
+    "glob-stream": "^3.1.15",
+    "lodash": "^2.4.1",
+    "request": "^2.45.0",
+    "rhyme-plus": "0.0.6",
+    "through2": "^1.1.1",
+    "through2-map": "^1.4.0",
+    "through2-spy": "^1.2.0",
+    "twit": "^1.1.18"
+  }
+}
