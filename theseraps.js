@@ -1,8 +1,11 @@
 'use strict';
 
+var botUtilities = require('bot-utilities');
 var getCandidates = require('./lib/candidates.js');
 var Twit = require('twit');
 var _ = require('lodash');
+
+_.mixin(botUtilities.lodashMixins);
 
 var program = require('commander');
 
@@ -12,7 +15,7 @@ program
   .option('-r, --random', 'only post a percentage of the time')
   .action(function (options) {
     if (options.random) {
-      if (_.random(0, 1, true) > 0.01) {
+      if (_.percentChance(98)) {
         console.log('Skipping...');
 
         process.exit(0);
@@ -42,14 +45,10 @@ program
 
       console.log(tweet);
 
-      var T = new Twit({
-        consumer_key: process.env.CONSUMER_KEY,
-        consumer_secret: process.env.CONSUMER_SECRET,
-        access_token: process.env.ACCESS_TOKEN,
-        access_token_secret: process.env.ACCESS_TOKEN_SECRET
-      });
+      var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
-      T.post('statuses/update', {status: tweet}, function (err, data, response) {
+      T.post('statuses/update', {status: tweet},
+          function (err, data, response) {
         if (err || response.statusCode !== 200) {
           console.log('Error sending tweet', err, response.statusCode);
 
