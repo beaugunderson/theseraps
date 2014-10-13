@@ -9,6 +9,10 @@ _.mixin(botUtilities.lodashMixins);
 
 var program = require('commander');
 
+function makeTweet(rap, news) {
+  return '🎶 ' + rap + '\n📰 ' + news;
+}
+
 program
   .command('tweet')
   .description('Generate and tweet a rap/news mashup')
@@ -22,6 +26,8 @@ program
       }
     }
 
+    var T = new Twit(botUtilities.getTwitterAuthFromEnv());
+
     getCandidates(function (candidates) {
       var choice;
 
@@ -29,23 +35,21 @@ program
         console.log('Choosing an exact match');
 
         choice = _(candidates)
-        .filter({score: 1})
-        .sample();
+          .filter({score: 1})
+          .sample().lines;
       } else {
         console.log('Choosing an inexact match');
 
         choice = _(candidates)
-        .filter(function (candidate) {
-          return candidate.score < 1;
-        })
-        .sample();
+          .filter(function (candidate) {
+            return candidate.score < 1;
+          })
+          .sample().lines;
       }
 
-      var tweet = '🎶 ' + choice.lines[0] + '\n📰 ' + choice.lines[1];
+      var tweet = makeTweet(choice[0], choice[1]);
 
       console.log(tweet);
-
-      var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
       T.post('statuses/update', {status: tweet},
           function (err, data, response) {
@@ -66,9 +70,8 @@ program
   .action(function () {
     getCandidates(function (candidates) {
       candidates.forEach(function (candidate) {
-        console.log('🎶', candidate.lines[0]);
-        console.log('📰', candidate.lines[1]);
-        console.log();
+        console.log(makeTweet(candidate.lines[0], candidate.lines[1]));
+        console.log('---');
       });
     });
   });
