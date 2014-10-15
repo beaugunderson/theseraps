@@ -22,6 +22,7 @@
     "through2": "^1.1.1",
     "through2-map": "^1.4.0",
     "through2-spy": "^1.2.0",
-    "twit": "^1.1.18"
+    "twit": "^1.1.18",
+    "wordfilter": "^0.1.7"
   }
 }
