@@ -1,11 +1,15 @@
 'use strict';
 
+var async = require('async');
 var botUtilities = require('bot-utilities');
 var getCandidates = require('./lib/candidates.js');
 var Twit = require('twit');
+var ValueCache = require('level-cache-tools').ValueCache;
 var _ = require('lodash');
 
 _.mixin(botUtilities.lodashMixins);
+
+var usedLines = new ValueCache('used-lines');
 
 var program = require('commander');
 
@@ -29,38 +33,58 @@ program
     var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
     getCandidates(function (candidates) {
-      var choice;
+      function pick() {
+        if (_.random(0, 100) < 50) {
+          console.log('Choosing an exact match');
 
-      if (_.random(0, 100) < 50) {
-        console.log('Choosing an exact match');
+          return _(candidates)
+            .filter({score: 1})
+            .sample().lines;
+        }
 
-        choice = _(candidates)
-          .filter({score: 1})
-          .sample().lines;
-      } else {
         console.log('Choosing an inexact match');
 
-        choice = _(candidates)
+        return _(candidates)
           .filter(function (candidate) {
             return candidate.score < 1;
           })
           .sample().lines;
       }
 
-      var tweet = makeTweet(choice[0], choice[1]);
+      var choice;
 
-      console.log(tweet);
+      async.whilst(function () {
+        console.log('Choosing...');
 
-      T.post('statuses/update', {status: tweet},
-          function (err, data, response) {
-        if (err || response.statusCode !== 200) {
-          console.log('Error sending tweet', err, response.statusCode);
-
-          return;
+        choice = pick();
+      }, function (cbWhilst) {
+        async.some(choice, usedLines.used, cbWhilst);
+      }, function (err) {
+        if (err) {
+          throw err;
         }
-      });
 
-      console.log('Done.');
+        usedLines.putMulti(choice, function (err) {
+          if (err) {
+            throw err;
+          }
+
+          var tweet = makeTweet(choice[0], choice[1]);
+
+          console.log(tweet);
+
+          T.post('statuses/update', {status: tweet},
+              function (err, data, response) {
+            if (err || response.statusCode !== 200) {
+              console.log('Error sending tweet', err, response.statusCode);
+
+              return;
+            }
+
+            console.log('Done.');
+          });
+        });
+      });
     });
   });
 
