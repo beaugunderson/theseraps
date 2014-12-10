@@ -21,15 +21,7 @@ program
   .command('tweet')
   .description('Generate and tweet a rap/news mashup')
   .option('-r, --random', 'only post a percentage of the time')
-  .action(function (options) {
-    if (options.random) {
-      if (_.percentChance(98)) {
-        console.log('Skipping...');
-
-        process.exit(0);
-      }
-    }
-
+  .action(botUtilities.randomCommand(function () {
     var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
     getCandidates(function (candidates) {
@@ -86,7 +78,7 @@ program
         });
       });
     });
-  });
+  }));
 
 program
   .command('candidates')
