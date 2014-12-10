@@ -17,7 +17,7 @@
     "level-cache-tools": "^2.2.0",
     "lodash": "^2.4.1",
     "news-text": "^2.0.0",
-    "quote-tools": "^2.1.0",
+    "quote-tools": "^3.0.0",
     "rhyme-plus": "0.0.6",
     "sentence-tools": "^3.2.0",
     "through2": "^0.6.3",
