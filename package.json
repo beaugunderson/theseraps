@@ -7,23 +7,35 @@
     "test": "mocha -R spec"
   },
   "author": "Beau Gunderson <beau@beaugunderson.com>",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "dependencies": {
-    "async": "^0.9.0",
-    "bot-utilities": "^2.1.0",
-    "cheerio": "^0.18.0",
-    "commander": "^2.5.0",
-    "glob-stream": "^3.1.18",
-    "level-cache-tools": "^2.2.0",
-    "lodash": "^2.4.1",
+    "async": "^1.2.0",
+    "bot-utilities": "^2.3.0",
+    "cheerio": "^0.19.0",
+    "commander": "^2.8.1",
+    "glob-stream": "^5.0.0",
+    "level-cache-tools": "^2.3.0",
+    "lodash": "^3.9.3",
     "news-text": "^2.1.0",
-    "quote-tools": "^3.0.0",
-    "rhyme-plus": "0.0.6",
-    "sentence-tools": "^3.2.0",
-    "through2": "^0.6.3",
+    "quote-tools": "^3.1.0",
+    "rhyme-plus": "git+https://github.com/beaugunderson/node-rhyme.git",
+    "sentence-tools": "^3.3.0",
+    "through2": "^0.6.5",
     "through2-map": "^1.4.0",
     "through2-spy": "^1.2.0",
-    "twit": "^1.1.18",
-    "wordfilter": "^0.1.7"
-  }
+    "twit": "^1.1.20",
+    "wordfilter": "^0.1.10"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/beaugunderson/node-twitter-theseraps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/beaugunderson/node-twitter-theseraps/issues"
+  },
+  "homepage": "https://github.com/beaugunderson/node-twitter-theseraps#readme"
 }
