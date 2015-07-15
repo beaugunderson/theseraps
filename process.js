@@ -5,7 +5,7 @@ var fs = require('fs');
 var globStream = require('glob-stream');
 var map = require('through2-map');
 var path = require('path');
-var rhymePlus = require('rhyme-plus');
+var Rhyme = require('rhyme-plus').Rhyme;
 var spy = require('through2-spy');
 var through2 = require('through2');
 
@@ -62,7 +62,9 @@ var toJsonString = through2.obj(function (lines, enc, cb) {
   cb(null, JSON.stringify(lines) + '\n');
 });
 
-rhymePlus.loadData(function (rhyme) {
+var rhyme = new Rhyme();
+
+rhyme.load(function () {
   var getRhymingLines = map.obj(function (song) {
     var rhymingLines = [];
 
