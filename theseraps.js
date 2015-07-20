@@ -13,8 +13,21 @@ var usedLines = new ValueCache('used-lines');
 
 var program = require('commander');
 
-function makeTweet(rap, news) {
-  return '🎶 ' + rap + '\n📰 ' + news;
+function makeTweet(order, lines) {
+  var news;
+  var rap;
+
+  if (order === 0) {
+    rap = '🎶 ' + lines[0];
+    news = '📰 ' + lines[1];
+
+    return [rap, news].join('\n');
+  }
+
+  rap = '🎶 ' + lines[1];
+  news = '📰 ' + lines[0];
+
+  return [news, rap].join('\n');
 }
 
 program
@@ -30,17 +43,17 @@ program
           console.log('Choosing an exact match');
 
           return _(candidates)
-            .filter({score: 1})
-            .sample().lines;
+            .filter({rhymeScore: 1})
+            .sample();
         }
 
         console.log('Choosing an inexact match');
 
         return _(candidates)
           .filter(function (candidate) {
-            return candidate.score < 1;
+            return candidate.rhymeScore < 1;
           })
-          .sample().lines;
+          .sample();
       }
 
       var choice;
@@ -50,18 +63,18 @@ program
 
         choice = pick();
       }, function (cbWhilst) {
-        async.some(choice, usedLines.used, cbWhilst);
+        async.some(choice.lines, usedLines.used, cbWhilst);
       }, function (err) {
         if (err) {
           throw err;
         }
 
-        usedLines.putMulti(choice, function (err) {
+        usedLines.putMulti(choice.lines, function (err) {
           if (err) {
             throw err;
           }
 
-          var tweet = makeTweet(choice[0], choice[1]);
+          var tweet = makeTweet(choice.order, choice.lines);
 
           console.log(tweet);
 
@@ -85,8 +98,14 @@ program
   .description('Get and print some candidates')
   .action(function () {
     getCandidates(function (candidates) {
+      candidates = _.sortBy(candidates, function (candidate) {
+        return candidate.syllableScore + candidate.rhymeScore;
+      });
+
       candidates.forEach(function (candidate) {
-        console.log(makeTweet(candidate.lines[0], candidate.lines[1]));
+        console.log('score: %d, %d', candidate.syllableScore,
+          candidate.rhymeScore);
+        console.log(makeTweet(candidate.order, candidate.lines));
         console.log('---');
       });
     });
