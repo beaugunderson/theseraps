@@ -30,6 +30,29 @@ function makeTweet(order, lines) {
   return [news, rap].join('\n');
 }
 
+function filter(candidates) {
+  console.log('got %d candidates', candidates.length);
+
+  candidates = candidates.filter(function (candidate) {
+    return candidate.syllableScore >= 0.7;
+  });
+
+  console.log('sorting %d candidates with good syllable score',
+    candidates.length);
+
+  candidates = _.sortBy(candidates, function (candidate) {
+    return -((candidate.syllableScore + candidate.rhymeScore) / 2);
+  });
+
+  if (candidates.length >= 4) {
+    candidates = _.take(candidates, Math.round(candidates.length * 0.25));
+  }
+
+  console.log('filtered to top %d candidates', candidates.length);
+
+  return candidates;
+}
+
 program
   .command('tweet')
   .description('Generate and tweet a rap/news mashup')
@@ -38,16 +61,18 @@ program
     var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
     getCandidates(function (candidates) {
+      candidates = filter(candidates);
+
       function pick() {
         if (_.random(0, 100) < 50) {
-          console.log('Choosing an exact match');
+          console.log('choosing an exact match');
 
           return _(candidates)
             .filter({rhymeScore: 1})
             .sample();
         }
 
-        console.log('Choosing an inexact match');
+        console.log('choosing an inexact match');
 
         return _(candidates)
           .filter(function (candidate) {
@@ -59,7 +84,7 @@ program
       var choice;
 
       async.whilst(function () {
-        console.log('Choosing...');
+        console.log('choosing...');
 
         choice = pick();
       }, function (cbWhilst) {
@@ -75,6 +100,11 @@ program
           }
 
           var tweet = makeTweet(choice.order, choice.lines);
+
+          console.log('score: %d, %d',
+            choice.syllableScore,
+            choice.rhymeScore,
+            (choice.syllableScore + choice.rhymeScore) / 2);
 
           console.log(tweet);
 
@@ -98,13 +128,13 @@ program
   .description('Get and print some candidates')
   .action(function () {
     getCandidates(function (candidates) {
-      candidates = _.sortBy(candidates, function (candidate) {
-        return candidate.syllableScore + candidate.rhymeScore;
-      });
+      candidates = filter(candidates);
 
       candidates.forEach(function (candidate) {
-        console.log('score: %d, %d', candidate.syllableScore,
-          candidate.rhymeScore);
+        console.log('score: syllable: %d, rhyme: %d',
+          candidate.syllableScore,
+          candidate.rhymeScore,
+          (candidate.syllableScore + candidate.rhymeScore) / 2);
         console.log(makeTweet(candidate.order, candidate.lines));
         console.log('---');
       });
