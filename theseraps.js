@@ -60,7 +60,11 @@ program
   .action(botUtilities.randomCommand(function () {
     var T = new Twit(botUtilities.getTwitterAuthFromEnv());
 
-    getCandidates(function (candidates) {
+    getCandidates(function (err, candidates) {
+      if (err) {
+        throw err;
+      }
+
       candidates = filter(candidates);
 
       function pick() {
