@@ -15,7 +15,7 @@
     "commander": "^2.9.0",
     "glob-stream": "^6.1.0",
     "level-cache-tools": "^3.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "news-text": "^3.0.0",
     "quote-tools": "^4.0.0",
     "rhyme-plus-plus": "^1.0.1",
