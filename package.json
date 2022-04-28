@@ -9,7 +9,7 @@
   "author": "Beau Gunderson <beau@beaugunderson.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "async": "^2.1.4",
+    "async": "^2.6.4",
     "bot-utilities": "^2.5.0",
     "cheerio": "^0.22.0",
     "commander": "^2.9.0",
